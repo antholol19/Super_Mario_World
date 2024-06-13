@@ -4,14 +4,18 @@
 
 #include "Entity.h"
 #include "defs.h"
-#include "AnimatedSprite.h"
+#include "AnimatedSpriteComponent.h"
+#include "ComponentManager.h"
+#include <memory>
+
 class Hero : public Entity
 {
 public:
-	Hero(std::string name, SDL_Renderer* renderer);
+	Hero(std::string name);
 	~Hero();
-	virtual void render() override;
+	virtual void render(SDL_Renderer* renderer) override;
 	virtual void update(float deltaTime) override;
+
 	void processKeyboard(const uint8_t* state);
 
 	void addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey);
@@ -20,19 +24,19 @@ public:
 	virtual void setDimensions(int w, int h) override;
 	virtual void setPosition(float x, float y) override;
 	
-	// size of the frame
-	void setFrameDimension(int w, int h);
-	void setImageGridSize(int i, int j);
+	// TODO: REMOVE
+	void setFrames(int i, int j, int w, int h, int gridLineWidth);
 
 private:
-	AnimatedSprite* _animSprite;
+	std::string _name;
+	std::shared_ptr<AnimatedSpriteComponent> _animSprite;
 	MarioState _marioState;
 	
 	float _dir;
-	int _frameNumber;
+	Grid2D _framePos;
 
 	static const float MAX_SPEED;
-	void loopFrame(int firstFrame, int lastFrame);
+	void loopFrame(Grid2D firstFrame, Grid2D lastFrame);
 
 	
 };

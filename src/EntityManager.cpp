@@ -1,8 +1,8 @@
 #include "EntityManager.h"
-
+EntityManager* EntityManager::_instance = nullptr;
 EntityManager::EntityManager()
 {
-
+	_entityCount = 0;
 }
 
 EntityManager::EntityManager(const EntityManager&)
@@ -23,13 +23,16 @@ EntityManager EntityManager::operator=(const EntityManager&)
 
 EntityManager& EntityManager::getInstance()
 {
-	static EntityManager* instance = new EntityManager();
-	return *instance;
+	if (_instance == nullptr)
+	{
+		_instance = new EntityManager();
+	}
+	return *_instance;
 }
 
-std::shared_ptr<Entity> EntityManager::createEntity(std::string name, SDL_Renderer* renderer, Layer layer)
+std::shared_ptr<Entity>& EntityManager::createEntity(std::string name, Layer layer)
 {
-	std::shared_ptr<Entity> newEntity = std::make_shared<Entity>(name, renderer);
+	std::shared_ptr<Entity> newEntity = std::make_shared<Entity>(name);
 	newEntity->setLayer(layer);
 
 	_entities.insert(std::make_pair(name, newEntity));
@@ -38,15 +41,16 @@ std::shared_ptr<Entity> EntityManager::createEntity(std::string name, SDL_Render
 	return _entities[name];
 }
 
-std::shared_ptr<Entity> EntityManager::getEntity(std::string name)
+std::shared_ptr<Entity>& EntityManager::getEntity(std::string name) 
 {
 	return _entities[name];
 }
 
-void EntityManager::addEntity(std::shared_ptr<Entity> entity, Layer layer)
+void EntityManager::addEntity(const std::shared_ptr<Entity>& entity, Layer layer)
 {
 	entity->setLayer(layer);
 	_entities.insert(std::make_pair(entity->getName(), entity));
+	_entityCount++;
 }
 
 void EntityManager::removeEntity(std::string name)
@@ -59,14 +63,14 @@ void EntityManager::removeEntity(std::string name)
 	}
 }
 
-void EntityManager::renderAll()
+void EntityManager::renderAll(SDL_Renderer* renderer)
 {
-	renderLayer(Layer::BACKGROUND);
-	renderLayer(Layer::MIDDLEGROUND);
-	renderLayer(Layer::FOREGROUND);
+	renderLayer(renderer, Layer::BACKGROUND);
+	renderLayer(renderer, Layer::MIDDLEGROUND);
+	renderLayer(renderer, Layer::FOREGROUND);
 }
 
-void EntityManager::renderLayer(Layer layer)
+void EntityManager::renderLayer(SDL_Renderer* renderer, Layer layer)
 {
 	for (auto it = _entities.begin(); it != _entities.end(); it++)
 	{
@@ -74,7 +78,7 @@ void EntityManager::renderLayer(Layer layer)
 		{
 			if (layer == it->second->getLayer())
 			{
-				it->second->render();
+				it->second->render(renderer);
 			}
 		}
 	}
@@ -94,4 +98,5 @@ void EntityManager::updateAll(float deltaTime)
 void EntityManager::deleteAll()
 {
 	_entities.erase(_entities.begin(), _entities.end());
+	_entityCount = 0;
 }

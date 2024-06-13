@@ -13,6 +13,11 @@ enum MarioState
 	SMALL_RUN = 4
 };
 
+struct Grid2D
+{
+	int row;
+	int col;
+};
 struct Vec2D
 {
 	float x;

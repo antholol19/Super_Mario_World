@@ -4,15 +4,13 @@
 #include <iostream>
 #include "defs.h"
 #include "BoxCollider2DComponent.h"
-#include "TextureRectangle.h"
-#include "AnimatedSprite.h"
 #include "EntityManager.h"
 #include "SoundComponent.h"
 #include "DynamicText.h"
-#include "EntityManager.h"
 #include "Hero.h"
 #include "Layer.h"
 #include "BGSpriteComponent.h"
+#include "ComponentManager.h"
 
 #include <memory>
 #include <set>
@@ -43,8 +41,7 @@ private:
 	Uint32 _startTime;
 
 	std::shared_ptr<Hero> _hero;
-	BGSpriteComponent* _bgSpriteComponent;
-	AnimatedSprite* _animatedSprite;
+	std::shared_ptr<BGSpriteComponent> _bgSpriteComponent;
 	SoundComponent* _worldMusic;
 
 	DynamicText* _text;

@@ -16,7 +16,7 @@ private:
 	ResourceManager();
 	ResourceManager(const ResourceManager&);
 	ResourceManager operator=(const ResourceManager&);
-
+	static ResourceManager* _instance;
 	std::unordered_map<std::string, SDL_Surface*> _surfaces;
 
 };

@@ -1,16 +1,8 @@
 #include "Entity.h"
 #include "BoxCollider2DComponent.h"
 
-Entity::Entity()
+Entity::Entity(std::string name)
 {
-	_renderer = nullptr;
-	_sprite = nullptr;
-	_name = "NoName";
-}
-
-Entity::Entity(std::string name, SDL_Renderer* renderer)
-{
-	_renderer = renderer;
 	_sprite = nullptr;
 	_name = name;
 }
@@ -18,10 +10,6 @@ Entity::Entity(std::string name, SDL_Renderer* renderer)
 
 Entity::~Entity()
 {
-	if (_sprite != nullptr)
-	{
-		delete _sprite;
-	}
 	for (int i = 0; i < _colliders.size(); i++)
 	{
 		delete _colliders[i];
@@ -43,42 +31,32 @@ void Entity::update(float deltaTime)
 	*/
 }
 
-void Entity::render()
+void Entity::render(SDL_Renderer* renderer)
 {
 	if (nullptr != _sprite)
 	{
-		_sprite->render(_renderer);
+		_sprite->render(renderer);
 	}
 
 	for (int i = 0; i < _colliders.size(); i++)
 	{
 		if (nullptr != _colliders[i])
 		{
-			SDL_SetRenderDrawColor(_renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
-			SDL_RenderDrawRect(_renderer, &_colliders[i]->getColliderBoundingBox());
+			SDL_SetRenderDrawColor(renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
+			SDL_RenderDrawRect(renderer, &_colliders[i]->getColliderBoundingBox());
 		}
 	}
 	
 }
 
-void Entity::addTextureRectangleComponent(std::string spritePath)
+void Entity::addSpriteComponent(SDL_Renderer* renderer, std::string filepath)
 {
-	_sprite = new TextureRectangle(_renderer, spritePath);
-}
-
-void Entity::addTextureRectangleComponent(std::string spritePath, int redColorKey, int greenColorKey, int blueColorKey)
-{
-	_sprite = new TextureRectangle(_renderer, spritePath, redColorKey, greenColorKey, blueColorKey);
+	_sprite = std::make_shared<SpriteComponent>(renderer, filepath);
 }
 
 void Entity::addCollider2DComponent()
 {
 	_colliders.push_back(new BoxCollider2DComponent());
-}
-
-TextureRectangle& Entity::getTextureRectangle()
-{
-	return *_sprite;
 }
 
 BoxCollider2DComponent& Entity::getBoxCollider2D(size_t index)
@@ -90,7 +68,7 @@ void Entity::setPosition(float x, float y)
 {
 	if (_sprite != nullptr)
 	{
-		_sprite->setPosition(x, y);
+		_sprite->setPositionDst(x, y);
 	}
 	for (int i = 0; i < _colliders.size(); i++)
 	{
@@ -105,7 +83,7 @@ void Entity::setDimensions(int w, int h)
 {
 	if (_sprite != nullptr)
 	{
-		_sprite->setDimensions(w, h);
+		_sprite->setDimensionDst(w, h);
 	}
 	for (int i = 0; i < _colliders.size(); i++)
 	{

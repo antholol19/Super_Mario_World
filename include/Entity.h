@@ -3,29 +3,29 @@
 #define ENTITY_H
 
 #include "SDL.h"
-#include "TextureRectangle.h"
-#include <string>
-#include <vector>
+#include "Component.h"
+#include "SpriteComponent.h"
+#include "ComponentManager.h"
 #include "BoxCollider2DComponent.h"
 #include "Layer.h"
+#include <memory>
+#include <string>
+#include <vector>
+
 
 class Entity
 {
 public:
-	Entity();
-	Entity(std::string name, SDL_Renderer* renderer);
+	Entity(std::string name);
 
 	~Entity();
 
 	virtual void update(float deltaTime);
-	virtual void render();
+	virtual void render(SDL_Renderer* renderer);
 
-	// Adding Components
-	void addTextureRectangleComponent(std::string spritePath);
-	void addTextureRectangleComponent(std::string spritePath, int redColorKey, int greenColorKey, int blueColorKey);
+	void addSpriteComponent(SDL_Renderer* renderer, std::string filepath);
 	void addCollider2DComponent();
 
-	TextureRectangle& getTextureRectangle();
 	BoxCollider2DComponent& getBoxCollider2D(size_t index);
 
 	virtual void setPosition(float x, float y);
@@ -39,12 +39,14 @@ public:
 
 	inline std::string getName() { return _name; }
 protected:
-	SDL_Renderer* _renderer;
-	TextureRectangle* _sprite;
+	
+	std::shared_ptr<SpriteComponent> _sprite;
 	Vec2D _pos;
 	Vec2D _vel;
 	std::vector<BoxCollider2DComponent*> _colliders;
 	Layer _layer;
+private:
+
 	std::string _name;
 };
 

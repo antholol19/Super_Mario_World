@@ -1,9 +1,10 @@
 #include "Hero.h"
 const float Hero::MAX_SPEED = 162.0f;
-Hero::Hero(std::string name, SDL_Renderer* renderer) : Entity(name, renderer)
+
+Hero::Hero(std::string name) : Entity(name), _name(name)
 {
 	_animSprite = nullptr;
-	_frameNumber = 1;
+	_framePos = { 1, 1 };
 	_marioState = SMALL_IDLE;
 	_pos = { 0.0f, 0.0f };
 	_vel = { 0.0f, 0.0f };
@@ -12,24 +13,23 @@ Hero::Hero(std::string name, SDL_Renderer* renderer) : Entity(name, renderer)
 
 Hero::~Hero()
 {
-	if (_animSprite != nullptr)
-	{
-		delete _animSprite;
-	}
+
 }
 
-void Hero::render()
+void Hero::render(SDL_Renderer* renderer)
 {
 	if (_animSprite != nullptr)
 	{
-		_animSprite->playFrame(_frameNumber);
+		_animSprite->playFrame(_framePos.row, _framePos.col);
 		if (_dir < 0.0f)
 		{
-			_animSprite->render(_renderer, true);
+			_animSprite->setIsFlipped(true);
+			_animSprite->render(renderer);
 		}
 		else
 		{
-			_animSprite->render(_renderer, false);
+			_animSprite->setIsFlipped(false);
+			_animSprite->render(renderer);
 		}
 		
 	}
@@ -40,25 +40,25 @@ void Hero::update(float deltaTime)
 	
 	if (_marioState == SMALL_IDLE)
 	{
-		_frameNumber = 1;
+		_framePos = { 1, 1 };
 	}
 	else if (_marioState == SMALL_LOOK_UP && _vel.x == 0 && _vel.y == 0)
 	{
-		_frameNumber = 2;
+		_framePos = { 1, 2 };
 	}
 	else if (_marioState == SMALL_DUCK)
 	{
-		_frameNumber = 3;
+		_framePos = { 1, 3 };
 	}
 	else if (_marioState == SMALL_WALK)
 	{
 		_pos.x += _vel.x * deltaTime;
-		loopFrame(4, 6);
+		loopFrame({ 1, 4 }, { 1, 6 });
 	}
 	else if (_marioState == SMALL_RUN)
 	{
 		_pos.x += _vel.x * deltaTime;
-		loopFrame(7, 9);
+		loopFrame({ 1, 7 }, { 1, 9 });
 	}
 
 	if (_animSprite != nullptr)
@@ -112,7 +112,7 @@ void Hero::processKeyboard(const uint8_t* state)
 
 void Hero::addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey)
 {
-	_animSprite = new AnimatedSprite(renderer, filepath, redColorKey, greenColorKey, blueColorKey);
+	_animSprite = std::make_shared<AnimatedSpriteComponent>(renderer, filepath, redColorKey, greenColorKey, blueColorKey);
 }
 
 void Hero::setDimensions(int w, int h)
@@ -133,32 +133,31 @@ void Hero::setPosition(float x, float y)
 	}
 }
 
-
-void Hero::setFrameDimension(int w, int h)
+void Hero::setFrames(int i, int j, int w, int h, int gridLineWidth)
 {
 	if (_animSprite != nullptr)
 	{
-		_animSprite->setFrameDimension(w, h);
-	}
-
-}
-
-void Hero::setImageGridSize(int i, int j)
-{
-	if (_animSprite != nullptr)
-	{
-		_animSprite->setImageGridSize(i, j);
+		_animSprite->setFrames(i, j, w, h, gridLineWidth);
 	}
 }
 
-void Hero::loopFrame(int firstFrame, int lastFrame)
+void Hero::loopFrame(Grid2D firstFrame, Grid2D lastFrame)
 {
-	if (_frameNumber < lastFrame && _frameNumber >= firstFrame)
+	if (_framePos.row < lastFrame.row && _framePos.row >= firstFrame.row)
 	{
-		_frameNumber++;
+		_framePos.row++;
 	}
 	else
 	{
-		_frameNumber = firstFrame;
+		_framePos.row = firstFrame.row;
+	}
+
+	if (_framePos.col < lastFrame.col && _framePos.col >= firstFrame.col)
+	{
+		_framePos.col++;
+	}
+	else
+	{
+		_framePos.col = firstFrame.col;
 	}
 }

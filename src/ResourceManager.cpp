@@ -1,5 +1,5 @@
 #include "ResourceManager.h"
-
+ResourceManager* ResourceManager::_instance = nullptr;
 ResourceManager::ResourceManager()
 {
 
@@ -26,8 +26,11 @@ ResourceManager ResourceManager::operator=(const ResourceManager&)
 
 ResourceManager& ResourceManager::getInstance()
 {
-	static ResourceManager* instance = new ResourceManager();
-	return *instance;
+	if (_instance == nullptr)
+	{
+		_instance = new ResourceManager();
+	}
+	return *_instance;
 }
 
 SDL_Surface* ResourceManager::getSurface(std::string filepath)
