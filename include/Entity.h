@@ -21,9 +21,8 @@ public:
 	~Entity();
 
 	virtual void update(float deltaTime);
-	virtual void render(SDL_Renderer* renderer);
 
-	void addSpriteComponent(SDL_Renderer* renderer, std::string filepath);
+	void addSpriteComponent(SDL_Renderer* renderer, std::string name, Layer layer, std::string filepath);
 	void addCollider2DComponent();
 
 	BoxCollider2DComponent& getBoxCollider2D(size_t index);
@@ -33,9 +32,6 @@ public:
 
 	Vec2D getPosition() { return _pos; }
 	Vec2D getVelocity() { return _vel; }
-
-	void setLayer(Layer layer);
-	Layer getLayer();
 
 	inline std::string getName() { return _name; }
 protected:

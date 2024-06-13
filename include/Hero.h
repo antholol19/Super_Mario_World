@@ -13,12 +13,12 @@ class Hero : public Entity
 public:
 	Hero(std::string name);
 	~Hero();
-	virtual void render(SDL_Renderer* renderer) override;
+
 	virtual void update(float deltaTime) override;
 
 	void processKeyboard(const uint8_t* state);
 
-	void addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey);
+	void addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string name, Layer layer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey);
 	
 	// size of mario
 	virtual void setDimensions(int w, int h) override;

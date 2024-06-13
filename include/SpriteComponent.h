@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Frame.h"
 #include "ResourceManager.h"
+#include "Layer.h"
 #include "SDL.h"
 #include "defs.h"
 #include <string>
@@ -31,12 +32,16 @@ public:
 	std::string getName() { return _name; }
 	virtual void setName(std::string name) { _name = name; }
 
+	void setLayer(Layer layer) { _layer = layer; }
+	Layer getLayer() { return _layer; }
+
 protected:
 	
 	SDL_Rect _src;
 	SDL_Rect _dst;
 	std::vector<Frame> _frames;
 	std::string _name;
+	Layer _layer;
 
 private:
 	SDL_Texture* _texture;

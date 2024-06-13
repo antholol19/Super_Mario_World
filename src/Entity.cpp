@@ -19,39 +19,14 @@ Entity::~Entity()
 
 void Entity::update(float deltaTime)
 {
-	/*
-	if (nullptr != _sprite)
-	{
-		int x = _sprite->getXPosition();
-		int y = _sprite->getYPosition();
-		int w = _sprite->getWidth();
-		int h = _sprite->getHeight();
-		
-	}
-	*/
-}
-
-void Entity::render(SDL_Renderer* renderer)
-{
-	if (nullptr != _sprite)
-	{
-		_sprite->render(renderer);
-	}
-
-	for (int i = 0; i < _colliders.size(); i++)
-	{
-		if (nullptr != _colliders[i])
-		{
-			SDL_SetRenderDrawColor(renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
-			SDL_RenderDrawRect(renderer, &_colliders[i]->getColliderBoundingBox());
-		}
-	}
 	
 }
 
-void Entity::addSpriteComponent(SDL_Renderer* renderer, std::string filepath)
+void Entity::addSpriteComponent(SDL_Renderer* renderer, std::string name, Layer layer, std::string filepath)
 {
 	_sprite = std::make_shared<SpriteComponent>(renderer, filepath);
+	_sprite->setLayer(layer);
+	ComponentManager::getInstance().addComponent(name, _sprite);
 }
 
 void Entity::addCollider2DComponent()
@@ -92,14 +67,4 @@ void Entity::setDimensions(int w, int h)
 			_colliders[i]->setDimensions(w, h);
 		}
 	}
-}
-
-void Entity::setLayer(Layer layer)
-{
-	_layer = layer;
-}
-
-Layer Entity::getLayer() 
-{
-	return _layer;
 }

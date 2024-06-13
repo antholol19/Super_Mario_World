@@ -30,10 +30,9 @@ EntityManager& EntityManager::getInstance()
 	return *_instance;
 }
 
-std::shared_ptr<Entity>& EntityManager::createEntity(std::string name, Layer layer)
+std::shared_ptr<Entity>& EntityManager::createEntity(std::string name)
 {
 	std::shared_ptr<Entity> newEntity = std::make_shared<Entity>(name);
-	newEntity->setLayer(layer);
 
 	_entities.insert(std::make_pair(name, newEntity));
 	_entityCount++;
@@ -46,9 +45,8 @@ std::shared_ptr<Entity>& EntityManager::getEntity(std::string name)
 	return _entities[name];
 }
 
-void EntityManager::addEntity(const std::shared_ptr<Entity>& entity, Layer layer)
+void EntityManager::addEntity(const std::shared_ptr<Entity>& entity)
 {
-	entity->setLayer(layer);
 	_entities.insert(std::make_pair(entity->getName(), entity));
 	_entityCount++;
 }
@@ -60,27 +58,6 @@ void EntityManager::removeEntity(std::string name)
 	{
 		_entities.erase(it);
 		_entityCount--;
-	}
-}
-
-void EntityManager::renderAll(SDL_Renderer* renderer)
-{
-	renderLayer(renderer, Layer::BACKGROUND);
-	renderLayer(renderer, Layer::MIDDLEGROUND);
-	renderLayer(renderer, Layer::FOREGROUND);
-}
-
-void EntityManager::renderLayer(SDL_Renderer* renderer, Layer layer)
-{
-	for (auto it = _entities.begin(); it != _entities.end(); it++)
-	{
-		if (it->second != nullptr)
-		{
-			if (layer == it->second->getLayer())
-			{
-				it->second->render(renderer);
-			}
-		}
 	}
 }
 

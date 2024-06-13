@@ -61,25 +61,19 @@ void ComponentManager::renderAll(SDL_Renderer* renderer)
 void ComponentManager::renderLayer(SDL_Renderer* renderer, Layer layer)
 {
 	// use dynamic pointer cast on components to render only those with a render method
-	/*
+	
 	for (auto it = _components.begin(); it != _components.end(); it++)
 	{
-
+		std::shared_ptr<SpriteComponent> sprite = std::dynamic_pointer_cast<SpriteComponent>(it->second);
+		if (sprite)
 		{
-			if (layer == s->getLayer())
+			if (layer == sprite->getLayer())
 			{
-				it->second->render(renderer);
-			}
-		}
-		if (it->second != nullptr)
-		{
-			if (layer == it->second->getLayer())
-			{
-				it->second->render(renderer);
+				sprite->render(renderer);
 			}
 		}
 	}
-	*/
+	
 }
 
 void ComponentManager::updateAll(float deltaTime)

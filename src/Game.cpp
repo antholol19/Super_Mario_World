@@ -131,7 +131,7 @@ void Game::handleUpdate()
 
 	EntityManager::getInstance().updateAll(deltaTime);
 	_bgSpriteComponent->setPositionDst(_hero->getPosition().x, _hero->getPosition().y);
-	_bgSpriteComponent->update(deltaTime);
+	ComponentManager::getInstance().updateAll(deltaTime);
 	
 }
 
@@ -145,8 +145,7 @@ void Game::handleRendering()
 	SDL_SetRenderDrawColor(_renderer, 96, 128, 255, 255);
 	SDL_RenderClear(_renderer);
 
-	_bgSpriteComponent->render(_renderer);
-	EntityManager::getInstance().renderAll(_renderer);
+	ComponentManager::getInstance().renderAll(_renderer);
 	_text->drawText(_renderer, std::to_string(countValue), 700, 10, 100, 100);
 	SDL_RenderPresent(_renderer);
 }
@@ -161,15 +160,16 @@ void Game::draw()
 void Game::loadData()
 {
 	// create entities
-	EntityManager::getInstance().createEntity("stage", Layer::MIDDLEGROUND);
+	//EntityManager::getInstance().createEntity("stage", Layer::MIDDLEGROUND);
 
 
 	_hero = std::make_shared<Hero>("hero");
-	EntityManager::getInstance().addEntity(_hero, Layer::FOREGROUND);
-	_hero->addAnimatedSpriteComponent(_renderer, "./assets/images/small_mario.bmp", 0x00, 0x74, 0x74);
+	_hero->addAnimatedSpriteComponent(_renderer, "small_mario", Layer::FOREGROUND, "./assets/images/small_mario.bmp", 0x00, 0x74, 0x74);
 	_hero->setFrames(5, 16, 48, 48, 1);
 	_hero->setPosition(50.0f, 200.0f);
 	_hero->setDimensions(100, 100);
+	EntityManager::getInstance().addEntity(_hero);
+	
 
 	/*
 	std::shared_ptr<Entity> stage = EntityManager::getInstance().getEntity("stage");
@@ -179,11 +179,12 @@ void Game::loadData()
 	*/
 
 	_bgSpriteComponent = std::make_shared<BGSpriteComponent>(_renderer, "./assets/images/background_super_mario_world.bmp");
-	ComponentManager::getInstance().addComponent("background", _bgSpriteComponent);
+	_bgSpriteComponent->setLayer(Layer::BACKGROUND);
 	_bgSpriteComponent->setTextureSize(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
 	_bgSpriteComponent->setFrames(7, 4, 512, 432, 1);
 	_bgSpriteComponent->playBGFrame(2, 4);
 	_bgSpriteComponent->setScrollSpeed(SCROLLING_SPEED);
+	ComponentManager::getInstance().addComponent("background", _bgSpriteComponent);
 
 	_worldMusic = new SoundComponent("./assets/sounds/Overworld Theme - Super Mario World.wav");
 	_worldMusic->setupDevice();

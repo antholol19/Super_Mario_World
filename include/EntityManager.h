@@ -12,13 +12,11 @@ class EntityManager
 {
 public:
 	static EntityManager& getInstance();
-	std::shared_ptr<Entity>& createEntity(std::string name, Layer layer);
+	std::shared_ptr<Entity>& createEntity(std::string name);
 	std::shared_ptr<Entity>& getEntity(std::string name);
-	void addEntity(const std::shared_ptr<Entity>& entity, Layer layer);
+	void addEntity(const std::shared_ptr<Entity>& entity);
 	void removeEntity(std::string name);
 
-	void renderLayer(SDL_Renderer* renderer, Layer layer);
-	void renderAll(SDL_Renderer* renderer);
 	void updateAll(float deltaTime);
 	void deleteAll();
 

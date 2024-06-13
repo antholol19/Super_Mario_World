@@ -16,25 +16,6 @@ Hero::~Hero()
 
 }
 
-void Hero::render(SDL_Renderer* renderer)
-{
-	if (_animSprite != nullptr)
-	{
-		_animSprite->playFrame(_framePos.row, _framePos.col);
-		if (_dir < 0.0f)
-		{
-			_animSprite->setIsFlipped(true);
-			_animSprite->render(renderer);
-		}
-		else
-		{
-			_animSprite->setIsFlipped(false);
-			_animSprite->render(renderer);
-		}
-		
-	}
-}
-
 void Hero::update(float deltaTime)
 {
 	
@@ -63,6 +44,7 @@ void Hero::update(float deltaTime)
 
 	if (_animSprite != nullptr)
 	{
+		_animSprite->playFrame(_framePos.row, _framePos.col);
 		_animSprite->setPositionDst(_pos.x, _pos.y);
 	}
 }
@@ -81,6 +63,7 @@ void Hero::processKeyboard(const uint8_t* state)
 			_marioState = SMALL_RUN;
 			_vel.x += MAX_SPEED * _dir;
 		}
+		_animSprite->setIsFlipped(false);
 		
 	}
 	else if (state[SDL_SCANCODE_A])
@@ -94,6 +77,7 @@ void Hero::processKeyboard(const uint8_t* state)
 			_marioState = SMALL_RUN;
 			_vel.x += MAX_SPEED * _dir;
 		}
+		_animSprite->setIsFlipped(true);
 	}
 	// up/down
 	else if (state[SDL_SCANCODE_S])
@@ -110,9 +94,11 @@ void Hero::processKeyboard(const uint8_t* state)
 	}
 }
 
-void Hero::addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey)
+void Hero::addAnimatedSpriteComponent(SDL_Renderer* renderer, std::string name, Layer layer, std::string filepath, int redColorKey, int greenColorKey, int blueColorKey)
 {
 	_animSprite = std::make_shared<AnimatedSpriteComponent>(renderer, filepath, redColorKey, greenColorKey, blueColorKey);
+	_animSprite->setLayer(layer);
+	ComponentManager::getInstance().addComponent(name, _animSprite);
 }
 
 void Hero::setDimensions(int w, int h)
