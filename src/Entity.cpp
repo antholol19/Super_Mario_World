@@ -1,5 +1,4 @@
 #include "Entity.h"
-#include "BoxCollider2DComponent.h"
 
 Entity::Entity(std::string name)
 {
@@ -31,10 +30,10 @@ void Entity::addSpriteComponent(SDL_Renderer* renderer, std::string name, Layer 
 
 void Entity::addCollider2DComponent()
 {
-	_colliders.push_back(new BoxCollider2DComponent());
+	_colliders.push_back(new ColliderComponent());
 }
 
-BoxCollider2DComponent& Entity::getBoxCollider2D(size_t index)
+ColliderComponent& Entity::getCollider(size_t index)
 {
 	return *_colliders[index];
 }

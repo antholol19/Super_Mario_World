@@ -15,7 +15,6 @@ BGSpriteComponent::~BGSpriteComponent()
 
 void BGSpriteComponent::update(float deltaTime)
 {
-	_dst.y = 0;
 	if (_offsetX < 0)
 	{
 		_dst.x = static_cast<int>(_offsetX * _scrollSpeed + _dst.w);
@@ -48,8 +47,8 @@ void BGSpriteComponent::playBGFrame(int row, int col)
 	_src.h = _frames[frameIdx].getFrameHeight();
 }
 
-void BGSpriteComponent::setTextureSize(int w, int h, int scale)
+void BGSpriteComponent::setTextureSize(int w, int h, float scale)
 {
-	_dst.w = w * scale;
-	_dst.h = h * scale;
+	_dst.w = static_cast<int>(w * scale);
+	_dst.h = static_cast<int>(h * scale);
 }

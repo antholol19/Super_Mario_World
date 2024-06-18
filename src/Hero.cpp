@@ -41,6 +41,11 @@ void Hero::update(float deltaTime)
 		_pos.x += _vel.x * deltaTime;
 		loopFrame({ 1, 7 }, { 1, 9 });
 	}
+	// Lock position
+	if (_pos.x > (SCREEN_WIDTH / 2 - 200))
+	{
+		_pos.x = SCREEN_WIDTH / 2 - 200;
+	}
 
 	if (_animSprite != nullptr)
 	{

@@ -1,9 +1,11 @@
 #include "Game.h"
 #include <cstdlib>
 #include <memory>
+#include <fstream>
 
 int Game::offsetX = 0; // Allow to scroll in the x direction
 int Game::countValue = 0;
+const int Game::SCREEN_HEIGHT = 648;
 const float Game::SCROLLING_SPEED = 0.2f;
 Game::Game() : _window(nullptr), _renderer(nullptr), _isRunning(false)
 {
@@ -130,7 +132,9 @@ void Game::handleUpdate()
 	_startTime = SDL_GetTicks();
 
 	EntityManager::getInstance().updateAll(deltaTime);
-	_bgSpriteComponent->setPositionDst(_hero->getPosition().x, _hero->getPosition().y);
+
+	_bgSpriteComponent->setPositionDst(_hero->getPosition().x, 0);
+	
 	ComponentManager::getInstance().updateAll(deltaTime);
 	
 }
@@ -160,27 +164,16 @@ void Game::draw()
 void Game::loadData()
 {
 	// create entities
-	//EntityManager::getInstance().createEntity("stage", Layer::MIDDLEGROUND);
-
-
 	_hero = std::make_shared<Hero>("hero");
 	_hero->addAnimatedSpriteComponent(_renderer, "small_mario", Layer::FOREGROUND, "./assets/images/small_mario.bmp", 0x00, 0x74, 0x74);
 	_hero->setFrames(5, 16, 48, 48, 1);
-	_hero->setPosition(50.0f, 200.0f);
+	_hero->setPosition(50.0f, 545.0f);
 	_hero->setDimensions(100, 100);
 	EntityManager::getInstance().addEntity(_hero);
 	
-
-	/*
-	std::shared_ptr<Entity> stage = EntityManager::getInstance().getEntity("stage");
-	stage->addSpriteComponent(_renderer, "./assets/images/SNES-Super_Mario_World_Yoshis_Island_2.bmp");
-	stage->setPosition(500.0f, 500.0f);
-	stage->setDimensions(10000, 500);
-	*/
-
 	_bgSpriteComponent = std::make_shared<BGSpriteComponent>(_renderer, "./assets/images/background_super_mario_world.bmp");
 	_bgSpriteComponent->setLayer(Layer::BACKGROUND);
-	_bgSpriteComponent->setTextureSize(SCREEN_WIDTH, SCREEN_HEIGHT, 1);
+	_bgSpriteComponent->setTextureSize(SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
 	_bgSpriteComponent->setFrames(7, 4, 512, 432, 1);
 	_bgSpriteComponent->playBGFrame(2, 4);
 	_bgSpriteComponent->setScrollSpeed(SCROLLING_SPEED);
@@ -189,7 +182,8 @@ void Game::loadData()
 	_worldMusic = new SoundComponent("./assets/sounds/Overworld Theme - Super Mario World.wav");
 	_worldMusic->setupDevice();
 	_worldMusic->playSound();
-
+	float scale = SCREEN_HEIGHT / (27.0f * 16.0f);
+	loadLevel("./assets/images/Yoshi_Island_2.txt", 320, 27, 16, 16, scale);
 
 	// text
 	_text = new DynamicText("./assets/fonts/8bitOperatorPlus8-Regular.ttf", 32);
@@ -222,4 +216,45 @@ Uint32 Game::count(Uint32 interval, void* param)
 	SDL_PushEvent(&event);
 	return(interval);
 	
+}
+
+void Game::loadLevel(std::string filepath, int levelSizeX, int levelSizeY, int tileSizeX, int tileSizeY, float scale)
+{
+	SDL_Rect src;
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, ResourceManager::getInstance().getSurface("./assets/images/tiles.bmp"));
+	int texWidth = 0;
+	int texHeight = 0;
+	SDL_QueryTexture(texture, nullptr, nullptr, &texWidth, &texHeight);
+	int numCol = texWidth / tileSizeX;
+	int numRow = texHeight / tileSizeY;
+	// Read the txt file to get the index of each tile
+	int tileIdx = 0;
+	std::fstream levelFile;
+	levelFile.open(filepath);
+	for (int i = 0; i < levelSizeY; i++) // row
+	{
+		for (int j = 0; j < levelSizeX; j++) // col
+		{
+			levelFile >> tileIdx;
+			// add only nontransparent tile
+			if (tileIdx != 0)
+			{
+				SDL_Rect dst;
+				
+				src.x = (tileIdx % numCol) * tileSizeX;
+				src.y = (tileIdx / numCol) * tileSizeY;
+				src.w = tileSizeX;
+				src.h = tileSizeY;
+
+				dst.x = static_cast<int>(j * tileSizeX * scale);
+				dst.y = static_cast<int>(i * tileSizeY * scale);
+				dst.w = static_cast<int>(tileSizeX * scale);
+				dst.h = static_cast<int>(tileSizeY * scale);
+
+				ComponentManager::getInstance().addTileComponent(tileIdx, texture, src, dst);
+			}
+		}
+	}
+
+	levelFile.close();
 }

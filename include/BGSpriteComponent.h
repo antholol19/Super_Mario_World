@@ -22,7 +22,7 @@ public:
 	void playBGFrame(int row, int col);
 
 	// Get/set screen size and scroll speed
-	void setTextureSize(int w, int h, int scale = 1);
+	void setTextureSize(int w, int h, float scale = 1.0);
 
 	void setScrollSpeed(float speed) { _scrollSpeed = speed; }
 	float getScrollSpeed() const { return _scrollSpeed; }

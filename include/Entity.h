@@ -6,7 +6,7 @@
 #include "Component.h"
 #include "SpriteComponent.h"
 #include "ComponentManager.h"
-#include "BoxCollider2DComponent.h"
+#include "ColliderComponent.h"
 #include "Layer.h"
 #include <memory>
 #include <string>
@@ -25,7 +25,7 @@ public:
 	void addSpriteComponent(SDL_Renderer* renderer, std::string name, Layer layer, std::string filepath);
 	void addCollider2DComponent();
 
-	BoxCollider2DComponent& getBoxCollider2D(size_t index);
+	ColliderComponent& getCollider(size_t index);
 
 	virtual void setPosition(float x, float y);
 	virtual void setDimensions(int w, int h);
@@ -39,7 +39,7 @@ protected:
 	std::shared_ptr<SpriteComponent> _sprite;
 	Vec2D _pos;
 	Vec2D _vel;
-	std::vector<BoxCollider2DComponent*> _colliders;
+	std::vector<ColliderComponent*> _colliders;
 	Layer _layer;
 private:
 

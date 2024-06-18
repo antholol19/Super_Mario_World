@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "defs.h"
-#include "BoxCollider2DComponent.h"
+#include "ColliderComponent.h"
 #include "EntityManager.h"
 #include "SoundComponent.h"
 #include "DynamicText.h"
@@ -11,6 +11,7 @@
 #include "Layer.h"
 #include "BGSpriteComponent.h"
 #include "ComponentManager.h"
+#include "Level.h"
 
 #include <memory>
 #include <set>
@@ -33,6 +34,7 @@ private:
 	void handleRendering();
 	void draw();
 	void loadData();
+	void loadLevel(std::string filepath, int levelSizeX, int levelSizeY, int tileSizeX, int tileSizeY, float scale = 1);
 
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
@@ -54,6 +56,8 @@ private:
 
 	static Uint32 count(Uint32 interval, void* name);
 	static int countValue;
+
+	static const int SCREEN_HEIGHT;
 
 
 };

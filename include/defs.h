@@ -1,7 +1,6 @@
 #pragma once
 
 #define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
 
 // Small Mario frame Number
 enum MarioState
